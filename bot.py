@@ -6,6 +6,7 @@ from aiogram.utils.exceptions import TerminatedByOtherGetUpdates
 import aiohttp
 import langid
 
+
 YANDEX_CATALOG_ID = os.environ.get('YANDEX_CATALOG_ID')
 TELEGRAM_BOT_API = os.environ.get('TELEGRAM_BOT_API')
 YANDEX_OAUTH = os.environ.get('YANDEX_OAUTH')
@@ -21,7 +22,7 @@ async def get_IAM_token() -> str:
     url = 'https://iam.api.cloud.yandex.net/iam/v1/tokens'
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json={'yandexPassportOauthToken': YANDEX_OAUTH}) as response:
-            token = await response.text()
+            token = await response.json()
         return token
 
 
@@ -31,6 +32,9 @@ def is_token_valid(token: datetime.datetime.fromisoformat) -> bool:
     return token > now
 
 async def detect_language(text: str) -> str:
+    global token
+    if not token or not is_token_valid(datetime.datetime.fromisoformat(token["expiresAt"])):
+        token = await get_IAM_token()
     url = 'https://translate.api.cloud.yandex.net/translate/v2/detect'
     headers = {
         'Content-Type': 'application/json', 
@@ -58,7 +62,7 @@ async def translate_message(message: str) -> str:
         print('WE HAVE A TOKEN')
     url = "https://translate.api.cloud.yandex.net/translate/v2/translate"
     data = {
-        "folderId": catalog_id,
+        "folderId": YANDEX_CATALOG_ID,
         "texts": [message],
         "targetLanguageCode": 'ru'
         }
@@ -73,7 +77,7 @@ async def translate_message(message: str) -> str:
             return response['translations'][0]['text']
 
 
-@dp.message_handler(lambda message: message.text and (-1001775371117 == message.chat.id and message.from_user == 2091201972))
+@dp.message_handler(lambda message: message.text and -1001775371117 == message.chat.id) #(-1001775371117 == message.chat.id and message.from_user == 2091201972))
 async def get_all_messages(message: types.Message):
     
     if langid.classify(message.text)[0] != 'ru':
