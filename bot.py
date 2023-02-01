@@ -8,7 +8,7 @@ from translate import yandex_translate
 try:
     TELEGRAM_BOT_API = os.environ.get('TELEGRAM_BOT_API')
     TELEGRAM_CHAT_ID = int(os.environ['TELEGRAM_CHAT_ID'])
-    TELEGRAM_TARGET_USER_ID = int(os.environ['TELEGRAM_TARGET_USER'])
+    TELEGRAM_TARGET_USER_ID = int(os.environ['TELEGRAM_TARGET_USER_ID'])
     YANDEX_CATALOG_ID = os.environ.get('YANDEX_CATALOG_ID')
     YANDEX_OAUTH = os.environ.get('YANDEX_OAUTH')
     TRANSLATE_FROM = 'de'
