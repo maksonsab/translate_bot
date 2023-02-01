@@ -8,7 +8,6 @@ from translate import yandex_translate
 try:
     TELEGRAM_BOT_API = os.environ.get('TELEGRAM_BOT_API')
     TELEGRAM_CHAT_ID = int(os.environ['TELEGRAM_CHAT_ID'])
-    TELEGRAM_MY_ID = int(os.environ['TELEGRAM_MY_ID'])
     TELEGRAM_TARGET_USER_ID = int(os.environ['TELEGRAM_TARGET_USER'])
     YANDEX_CATALOG_ID = os.environ.get('YANDEX_CATALOG_ID')
     YANDEX_OAUTH = os.environ.get('YANDEX_OAUTH')
@@ -31,7 +30,9 @@ langid.set_languages(['de', 'en', 'ru'])
 
 @dp.message_handler(lambda message: message.text and (TELEGRAM_CHAT_ID == message.chat.id and message.from_user == TELEGRAM_TARGET_USER_ID))
 async def get_all_messages(message: types.Message):
-    
+    """This handler works with messages from the exact user in specific chat. 
+    If you want to handle all messages please delete the lambda function from 'message_handler'.
+    """
     if langid.classify(message.text)[0] != 'ru':
         if lang:= await translate._detect_lang(message.text) == TRANSLATE_FROM:
             answer = await translate.translate(message.text)
