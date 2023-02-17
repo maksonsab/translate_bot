@@ -26,8 +26,6 @@ token = None
 langid.set_languages(['de', 'en', 'ru'])
 
 
-
-
 @dp.message_handler(lambda message: message.text and (TELEGRAM_CHAT_ID == message.chat.id and message.from_user == TELEGRAM_TARGET_USER_ID))
 async def get_all_messages(message: types.Message):
     """This handler works with messages from the exact user in specific chat. 
